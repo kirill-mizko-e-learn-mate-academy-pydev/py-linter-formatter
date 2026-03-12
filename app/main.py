@@ -9,17 +9,6 @@ clear_dict = {
 }
 
 
-def gets_errors(errors: list, file_path: str) -> list:
-    error = [
-        format_linter_error(error)
-        for error in errors
-        if error.get("filename") == file_path
-    ]
-
-    satus = "failed" if error else "passed"
-    return [error, satus]
-
-
 def format_linter_error(error: dict) -> dict:
     return {
         clear_dict.get(err_key) : "flake8"
@@ -31,9 +20,10 @@ def format_linter_error(error: dict) -> dict:
 
 def format_single_linter_file(file_path: str, errors: list) -> dict:
     return {
-        "errors" : gets_errors(file_path=file_path, errors=errors)[0],
+        "errors" : [format_linter_error(error) for error in errors],
         "path" : file_path,
-        "status" : gets_errors(file_path=file_path, errors=errors)[1]
+        "status" : "failed" if [format_linter_error(error)
+                                for error in errors] else "passed"
     }
 
 
